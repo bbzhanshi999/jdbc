@@ -1,0 +1,26 @@
+group 'com.zql'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+
+dependencies {
+    compile group: 'com.alibaba', name: 'druid', version: '1.0.15'
+    compile group: 'org.springframework', name: 'spring-context', version: '3.2.17.RELEASE'
+    compile group: 'org.springframework', name: 'spring-jdbc', version: '3.2.17.RELEASE'
+    compile group: 'com.oracle', name: 'ojdbc14', version: '10.2.0.4.0'
+    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.7'
+    compile group: 'ch.qos.logback', name: 'logback-access', version: '1.1.7'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+    compile group: 'org.logback-extensions', name: 'logback-ext-spring', version: '0.1.4'
+    compile group: 'com.google.collections', name: 'google-collections', version: '1.0'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.3.2'
+}
+

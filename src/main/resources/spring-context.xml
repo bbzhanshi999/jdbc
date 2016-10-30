@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-lazy-init="true">
+    <description>Spring Configuration</description>
+
+    <context:annotation-config/>
+    <context:property-placeholder location="classpath:app.properties"/>
+    <!--可以通过@value访问配置文件-->
+    <util:properties id="app_props" location="classpath:app.properties"></util:properties>
+
+
+    <!--扫描配置，controller不扫描，交给mvc模块扫描-->
+    <context:component-scan base-package="com"/>
+
+    <bean id="baseDao" abstract="true">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="patientInfoDao" class="com.simlink.empi.dao.PatientInfoDao" parent="baseDao"/>
+    <bean id="empiMatchRangeConfigDao" class="com.simlink.empi.dao.EmpiMatchRangeConfigDao" parent="baseDao"/>
+    <bean id="empiDao" class="com.simlink.empi.dao.EmpiDao" parent="baseDao"/>
+
+    <bean id="empiService" class="com.simlink.empi.service.EmpiService">
+        <property name="patientInfoDao" ref="patientInfoDao"/>
+        <property name="empiDao" ref="empiDao"/>
+    </bean>
+
+
+    <!--配置数据库连接池-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <!-- 基本属性 url、user、password -->
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <property name="minIdle" value="2" />
+        <property name="maxIdle" value="5" />
+
+    </bean>
+
+    <!-- 定义事务 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- 配置 Annotation 驱动，扫描@Transactional注解的类定义事务  -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+
+</beans>
